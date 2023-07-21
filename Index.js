@@ -1,10 +1,11 @@
 const express = require('express')
 const app = express()
-const port = 8000
+const port = 4000
 const mongoose = require('mongoose')
 const bodyParser=require('body-parser')
 const cors =require('cors')
 const Users =require('./SignupModule/Signupmodules')
+const data = require('./SignupModule/UserDataModule')
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -53,7 +54,7 @@ mongoose.connect(url)
                 res.send({message:'password Required'})
             }
             else{
-          Users.create(userDetail, (err, result) => {
+            Users.create(userDetail, (err, result) => {
             if (err) {
               res.status(500).send({ message: err.message });
             } else {
@@ -63,6 +64,24 @@ mongoose.connect(url)
         }
         }
       });
+
+
+      app.post('/auth/login',async (req,res)=>{
+        const {email,password} = req.body
+        console.log('email ',email, password)
+        const userDetail = await Users.findOne({ email: email });
+        if (userDetail) {
+          if (password == userDetail.password) {
+            res.send(userDetail);
+          } else {
+            res.send({ error: "invaild Password" });
+          }
+        } else {
+          res.send({ error: "user is not exist" });
+        }
+       
+      }
+      )
 
 
 app.listen(port, () => {
