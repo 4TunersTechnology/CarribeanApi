@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
-
-const data = mongoose.Schema([])
-module.exports = mongoose.model("data", data);
+const UserSchema = mongoose.Schema({
+    imgUrl:Array
+  });
+module.exports = mongoose.model("data", UserSchema);
