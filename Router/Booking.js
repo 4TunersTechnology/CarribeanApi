@@ -1,6 +1,7 @@
 const express =require('express');
 const router =express.Router()
-const Users = require('../SignupModule/Signupmodules')
+const Users = require('../SignupModule/Signupmodules');
+const { json } = require('body-parser');
 function uniqid(){
     return Math.random().toString(16).slice(2);
   }
@@ -25,9 +26,12 @@ console.log("The current date is " + currentDate);
 }
 
 router.post('/booking',async (req,res)=>{
-    const {property_id,entry_date,exit_date,extra_services,total_amount,tranjectionId} = req.body
+    const {property_id,entry_date,exit_date,extra_services,total_amount,tranjectionId,user_id} = req.body
 
-    if(property_id == undefined || property_id ==""){
+    if(user_id == undefined || user_id ==""){
+      res.send({message:'user id Required'})
+     }
+   else if(property_id == undefined || property_id ==""){
         res.send({message:'property id Required'})
     }
     else if(entry_date == undefined || entry_date ==""){
@@ -37,7 +41,7 @@ router.post('/booking',async (req,res)=>{
         res.send({message:'Exit Date Required'})
     }
     else if(extra_services == undefined || extra_services ==""){
-        res.send({message:'Exgra Services Required'})
+        res.send({message:'Extra Services Required'})
     }
     else if(total_amount == undefined || total_amount ==""){
         res.send({message:'Total Amount Required'})
@@ -46,8 +50,19 @@ router.post('/booking',async (req,res)=>{
         res.send({message:"Tranjection Id Required"})
     }
     else{
+      let data = await Users.find({user_id:user_id})
+      let booking_data = JSON.stringify(data[0])
+      // console.log("checkkkkkkk ",JSON.parse(booking_data)?.Booking_History)
+      let bookingArray = []
+      if(JSON.parse(booking_data)?.Booking_History == undefined){
+        bookingArray.push({property_id:property_id,booking_date:GetCurrentDate(),entry_date: entry_date,exit_date:exit_date,extra_services:extra_services,total_amount:total_amount,tranjectionId:tranjectionId})
+      }
+      else{
+        bookingArray = JSON.parse(booking_data)?.Booking_History
+        bookingArray.push({property_id:property_id,booking_date:GetCurrentDate(),entry_date: entry_date,exit_date:exit_date,extra_services:extra_services,total_amount:total_amount,tranjectionId:tranjectionId})
+      }
     await Users.findOneAndUpdate({user_id:req.body.user_id }, 
-    { $set: { Booking_History:[{property_id:property_id,booking_date:GetCurrentDate(),entry_date: entry_date,exit_date:exit_date,extra_services:extra_services,total_amount:total_amount,tranjectionId:tranjectionId}]  } }, { //options
+    { $set: { Booking_History:[...bookingArray]  } }, { //options
           returnNewDocument: true,
           new: true,
           strict: false

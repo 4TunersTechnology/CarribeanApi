@@ -4,29 +4,7 @@ const Users = require('../../SignupModule/Signupmodules')
 const multer  = require('multer')
 const path = require('path')
 
-const RaftingCertificate = multer({
-    storage : multer.diskStorage({
-   destination: (req, file, cb) => cb(null,"uploads"), // cb -> callback
-   filename: (req, file, cb) => {
-     const uniqueName = `${Date.now()}-${Math.round(
-       Math.random() * 1e9
-     )}${path.extname(file.originalname)}`;
-     cb(null, uniqueName);
-   },
- })
- }).single('rafting_certifcate')
 
- const FoodCertificate = multer({
-  storage : multer.diskStorage({
- destination: (req, file, cb) => cb(null,"uploads"), // cb -> callback
- filename: (req, file, cb) => {
-   const uniqueName = `${Date.now()}-${Math.round(
-     Math.random() * 1e9
-   )}${path.extname(file.originalname)}`;
-   cb(null, uniqueName);
- },
-})
-}).single('exotic_food_certifcate')
 
  const PropertyImages = multer({
   storage : multer.diskStorage({
@@ -60,12 +38,12 @@ router.post('/property_add',PropertyImages.fields(
       }
   ]
 ),async (req,res)=>{
-    const {property_name,select_view,property_type,price_per_night,guest_count,bedroom_count,
+    const {user_id,property_name,select_view,property_type,price_per_night,guest_count,bedroom_count,
       bathroom_count,property_description,property_rules,country,state,city,street_address,
       property_images,amenties,extra_service,rafting_number_of_guest,rafting_price,rafting_description,rafting_certifcate,
       exotic_food_number_of_guest,exotic_food_price,exotic_food_description,exotic_food_certifcate} = req.body
-   console.log('checkkkkkk ',req?.files?.exotic_food_certifcate)
-    if(property_name == undefined || property_name ==""){
+  //  console.log('checkkkkkk ',req?.files?.exotic_food_certifcate)
+    if(property_name == undefined || property_name ==""){ 
         res.send({message:'property name Required'})
     }
     else if(select_view == undefined || select_view ==""){
@@ -140,11 +118,19 @@ router.post('/property_add',PropertyImages.fields(
       res.send({message:'exotic food certificate Required'})
     }
     else{
+      let data = await Users.find({user_id:user_id})
+      let property_data = JSON.stringify(data[0])
+      //  console.log("checkkkkkkk ",JSON.parse(property_data)?.property_list)
+      let propertyArray = []
+      if(JSON.parse(property_data)?.property_list == undefined){
+        propertyArray.push({user_id:req.body.user_id,property_id:uniqid(),property_name:property_name,select_view:select_view,property_type:property_type,price_per_night:price_per_night,guest_count:guest_count,bedroom_count:bedroom_count,bathroom_count:bathroom_count,property_description:property_description,property_rules:property_rules,country:country,state:state,city:city,street_address:street_address,property_images:req?.files?.property_images,amenties:amenties,extra_service:extra_service,rafting_number_of_guest:rafting_number_of_guest,rafting_price:rafting_price,rafting_description:rafting_description,rafting_certifcate:req?.files?.rafting_certifcate,exotic_food_number_of_guest:exotic_food_number_of_guest,exotic_food_price:exotic_food_price,exotic_food_description:exotic_food_description,exotic_food_certifcate:req?.files?.exotic_food_certifcate })
+      }
+      else{
+        propertyArray = JSON.parse(property_data)?.property_list
+        propertyArray.push({user_id:req.body.user_id,property_id:uniqid(),property_name:property_name,select_view:select_view,property_type:property_type,price_per_night:price_per_night,guest_count:guest_count,bedroom_count:bedroom_count,bathroom_count:bathroom_count,property_description:property_description,property_rules:property_rules,country:country,state:state,city:city,street_address:street_address,property_images:req?.files?.property_images,amenties:amenties,extra_service:extra_service,rafting_number_of_guest:rafting_number_of_guest,rafting_price:rafting_price,rafting_description:rafting_description,rafting_certifcate:req?.files?.rafting_certifcate,exotic_food_number_of_guest:exotic_food_number_of_guest,exotic_food_price:exotic_food_price,exotic_food_description:exotic_food_description,exotic_food_certifcate:req?.files?.exotic_food_certifcate })
+      }
         await Users.findOneAndUpdate({user_id:req.body.user_id }, 
-            { $set:{property_list: {user_id:req.body.user_id,property_id:uniqid(),property_name:property_name,select_view:select_view,property_type:property_type,price_per_night:price_per_night,guest_count:guest_count,bedroom_count:bedroom_count,
-              bathroom_count:bathroom_count,property_description:property_description,property_rules:property_rules,country:country,state:state,city:city,street_address:street_address,
-              property_images:req?.files?.property_images,amenties:amenties,extra_service:extra_service,rafting_number_of_guest:rafting_number_of_guest,rafting_price:rafting_price,rafting_description:rafting_description,rafting_certifcate:req?.files?.rafting_certifcate,
-              exotic_food_number_of_guest:exotic_food_number_of_guest,exotic_food_price:exotic_food_price,exotic_food_description:exotic_food_description,exotic_food_certifcate:req?.files?.exotic_food_certifcate } }}, { //options
+            { $set:{property_list: [...propertyArray] }}, { //options
               returnNewDocument: true,
               new: true,
               strict: false

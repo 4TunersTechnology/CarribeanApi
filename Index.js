@@ -20,6 +20,8 @@ const send_otp = require('./Router/RagistrationProcess/Sendotp')
 const IdentityVerification = require('./Router/RagistrationProcess/IdentityVerification')
 const PropertyAdd = require('./Router/RagistrationProcess/PropertyAdd')
 const GetUserProfile = require('./Router/User/UserProfile')
+const support = require('./Router/OtherApi/EmailSupport')
+const booking = require('./Router/Booking')
 
 
 
@@ -31,6 +33,8 @@ app.use(send_otp)
 app.use(IdentityVerification)
 app.use(PropertyAdd)
 app.use(GetUserProfile)
+app.use(support)
+app.use(booking)
 
 const url = `mongodb://4tuners:12345@ac-qnxikpe-shard-00-00.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-01.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-02.lranesa.mongodb.net:27017/Carribean?ssl=true&replicaSet=atlas-yjmn84-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
