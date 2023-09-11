@@ -1,26 +1,26 @@
 const express =require('express');
 const router =express.Router()
 const Users = require('../SignupModule/Signupmodules')
-
+const bcrypt = require('bcrypt');
   var user_id ;
-Users.find().count(function(err, count){
-  console.log("Number of docs: ", count );
-  user_id = count;
-});
+
 
 router.post("/auth/signup", async (req, res) => {
     const { email, password, first_name,last_name ,dob,confirm_password } = req.body;
-  
-    // const encrypt_password = await bcrypt.hash(password, 10);
+    Users.find().count(async function(err, count){
+      console.log("Number of docs: ", count );
+      user_id = count;
+
+
+      const encrypt_password = await bcrypt.hash(password, 10);
     console.log('user id ',user_id)
     const userDetail = {
       email: email,
-      password: password,
+      password: encrypt_password,
       first_name:first_name,
       last_name:last_name,
       dob:dob,
-      confirm_password:confirm_password,
-      user_id:user_id+1,
+      user_id:count+1,
       user_type:""
     };
   
@@ -61,6 +61,9 @@ router.post("/auth/signup", async (req, res) => {
       });
     }
     }
+
+    });
+     
   });
 
  module.exports=router
