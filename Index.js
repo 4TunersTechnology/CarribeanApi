@@ -22,6 +22,9 @@ const PropertyAdd = require('./Router/RagistrationProcess/PropertyAdd')
 const GetUserProfile = require('./Router/User/UserProfile')
 const support = require('./Router/OtherApi/EmailSupport')
 const booking = require('./Router/Booking')
+const ForgateModule = require('./Router/ForgateModule')
+const Verification = require('./Router/Verification')
+const change_password = require('./Router/RagistrationProcess/UpdatePassword')
 
 
 
@@ -35,6 +38,9 @@ app.use(PropertyAdd)
 app.use(GetUserProfile)
 app.use(support)
 app.use(booking)
+app.use(ForgateModule)
+app.use(Verification)
+app.use(change_password)
 
 const url = `mongodb://4tuners:12345@ac-qnxikpe-shard-00-00.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-01.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-02.lranesa.mongodb.net:27017/Carribean?ssl=true&replicaSet=atlas-yjmn84-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
