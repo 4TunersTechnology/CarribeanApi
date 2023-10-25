@@ -11,8 +11,7 @@ const app = express()
 const path = require('path')
 app.get('/', (req, res) => {
   res.send('Hello World!')
-  // let collection =  mongoose.collection("users");
-  // console.log('mongose collaction ',collection)
+
 })
 const signup =require("./Router/Signup");
 const Login = require('./Router/Login')
@@ -25,6 +24,8 @@ const booking = require('./Router/Booking')
 const ForgateModule = require('./Router/ForgateModule')
 const Verification = require('./Router/Verification')
 const change_password = require('./Router/RagistrationProcess/UpdatePassword')
+const AllProperty = require('./Router/OtherApi/AllProperty')
+const get_propertys = require('./Router/OtherApi/GetProperty')
 
 
 
@@ -41,6 +42,10 @@ app.use(booking)
 app.use(ForgateModule)
 app.use(Verification)
 app.use(change_password)
+app.use(AllProperty)
+app.use(get_propertys)
+
+
 
 const url = `mongodb://4tuners:12345@ac-qnxikpe-shard-00-00.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-01.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-02.lranesa.mongodb.net:27017/Carribean?ssl=true&replicaSet=atlas-yjmn84-shard-0&authSource=admin&retryWrites=true&w=majority`;
 

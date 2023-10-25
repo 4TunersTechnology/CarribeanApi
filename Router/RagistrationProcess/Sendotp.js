@@ -7,7 +7,7 @@ const authToken = LocalStorage.TWILIO_AUTH_TOKEN;
 const PhoneNO = LocalStorage.TWILIO_PHONE_NO;
 const client = require('twilio')(accountSid, authToken);
 
-router.post('auth/send_otp',async (req,res)=>{
+router.post('/auth/send_otp',async (req,res)=>{
   const {user_id,mobile_no} = req.body
   if(mobile_no == ""){
     res.send({error:"mobile no required"})
