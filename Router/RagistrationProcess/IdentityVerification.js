@@ -18,13 +18,14 @@ const fileUpload = multer({
 
 router.post('/identity_verification',fileUpload,async (req,res)=>{
     const {country,identity_type,card_image} = req.body
+    console.log('card image ',req.file)
     if(country == undefined || country ==""){
         res.send({message:'country Required'})
     }
     else if(identity_type == undefined || identity_type ==""){
         res.send({message:'Identity Required'})
     }
-    else if(card_image == undefined || card_image ==""){
+    else if(req?.file?.path == undefined || req?.file?.path ==""){
         res.send({message:'Identity Image Required'})
     }
     else{

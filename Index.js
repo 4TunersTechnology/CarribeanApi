@@ -11,8 +11,7 @@ const app = express()
 const path = require('path')
 app.get('/', (req, res) => {
   res.send('Hello World!')
-  // let collection =  mongoose.collection("users");
-  // console.log('mongose collaction ',collection)
+
 })
 const signup =require("./Router/Signup");
 const Login = require('./Router/Login')
@@ -21,10 +20,14 @@ const IdentityVerification = require('./Router/RagistrationProcess/IdentityVerif
 const PropertyAdd = require('./Router/RagistrationProcess/PropertyAdd')
 const GetUserProfile = require('./Router/User/UserProfile')
 const support = require('./Router/OtherApi/EmailSupport')
-const booking = require('./Router/Booking')
+const booking = require('./Router/BookingModules/Booking')
+const CheckOut = require('./Router/BookingModules/CheckOut')
 const ForgateModule = require('./Router/ForgateModule')
 const Verification = require('./Router/Verification')
 const change_password = require('./Router/RagistrationProcess/UpdatePassword')
+const AllProperty = require('./Router/OtherApi/AllProperty')
+const get_propertys = require('./Router/OtherApi/GetProperty')
+const Most_dest_Propety = require('./Router/OtherApi/Most_dest_Propety')
 
 
 
@@ -41,6 +44,12 @@ app.use(booking)
 app.use(ForgateModule)
 app.use(Verification)
 app.use(change_password)
+app.use(AllProperty)
+app.use(get_propertys)
+app.use(Most_dest_Propety)
+app.use(CheckOut)
+app.use(express.static('public'))   //for the image uploade
+
 
 const url = `mongodb://4tuners:12345@ac-qnxikpe-shard-00-00.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-01.lranesa.mongodb.net:27017,ac-qnxikpe-shard-00-02.lranesa.mongodb.net:27017/Carribean?ssl=true&replicaSet=atlas-yjmn84-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
@@ -196,6 +205,53 @@ app.post('/profile/upload', fileUpload,async (req, res) => {
 }
   
 });
+
+
+
+
+
+  function uniqid(){
+    return Math.random().toString(16).slice(2);
+  }
+
+app.get('/get_all_propertys',async (req,res)=>{
+     const {property_id,entry_date,exit_date,extra_services,total_amount,tranjectionId,user_id} = req.body
+
+    // if(user_id == undefined || user_id ==""){
+    //   res.send({message:'user id Required'})
+    //  }
+    // else{
+      // Users.findOne({user_id:user_id})
+      // .then(resoponce =>console.log('responce ',resoponce))
+      // .catch(error =>console.log({'error':'user not found'}))
+      let data = await  Users.find()
+      // Downtown,Uptown , Mountains , Beach , River , Ecotourism 
+      let myARray = []
+      let propertydata = data.filter(item => {
+        let stringData = JSON.stringify(item)
+        const {_id , ...rest } = JSON.parse(stringData)
+        if(rest?.property_list){
+          myARray = [...rest?.property_list]
+        }
+      })
+    let Uptown =  myARray.filter(item =>item.property_type == 'Uptown')
+    let Mountains = myARray.filter(item => item.property_type =='Mountains')
+    let Beach = myARray.filter(item=> item.property_type == 'Beach')
+    let River = myARray.filter(item => item.property_type == 'River')
+    let Ecotourism = myARray.filter(item => item.property_type == 'Ecotourism')
+    let Downtown = myARray.filter(item => item.property_type == 'Downtown')
+    let destinations = [Uptown,Downtown,Mountains,Beach,River,Ecotourism]
+    let near_you_destinations = [...myARray]
+    let result = {
+      populer_destinations:destinations,
+      near_by_you:near_you_destinations
+    }
+    res.send({message:result})
+      // console.log('json dtaaaaaa ',local)
+   
+  // }
+ }
+  )
 
 app.listen(port,()=>{
   console.log(`Example app listening on port ${port}`)
