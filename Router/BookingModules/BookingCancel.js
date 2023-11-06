@@ -17,24 +17,29 @@ let currentMonth = String(date.getMonth()+1).padStart(2,"0");
 let currentYear = date.getFullYear();
 
 // we will display the date as DD-MM-YYYY 
+const hours = date.getHours();
+const minutes = date.getMinutes();
+const seconds = date.getSeconds();
 
-let currentDate = `${currentDay}-${currentMonth}-${currentYear}`;
+const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+let currentDate = `${currentDay}-${currentMonth}-${currentYear} ${formattedTime}`;
 return currentDate;
 
-console.log("The current date is " + currentDate); 
+
 
 }
 
-router.post('/check_out',async (req,res)=>{
-    const {tranjectionId,user_id,booking_id} = req.body
-
+router.post('/booking_cancel',async (req,res)=>{
+    const {user_id,booking_id,explain_reason} = req.body
+    // console.log("The current date is " + GetCurrentDate()); 
     if(user_id == undefined || user_id ==""){
       res.send({message:'user id Required'})
      }
     else if(booking_id == undefined || booking_id ==""){
         res.send({message:'Booking id Required'})
     }
-    else if(tranjectionId == undefined || tranjectionId ==""){
+    else if(explain_reason == undefined || explain_reason ==""){
         res.send({message:"Tranjection Id Required"})
     }
     else{
@@ -47,11 +52,9 @@ router.post('/check_out',async (req,res)=>{
             let Booking_History = JSON.parse(booking_data)?.Booking_History
             let filterData = Booking_History.filter((value)=>{
               if(value.booking_id == booking_id){
-                value.status = 'complete',
-                value.tranjectionId = tranjectionId
-              }
-              else{
-                
+                value.status = 'cancel',
+                value['explain_reason'] = explain_reason,
+                value['cancel_date'] = GetCurrentDate()
               }
             })
             // res.send({message:value})
@@ -67,11 +70,10 @@ router.post('/check_out',async (req,res)=>{
          res.send({error:'User Not Found'})
        }
        else{
-         res.send({message:Booking_History})
+         res.send({message:"order cancel is done"})
        }
      })
      .catch((err) => console.log(err))
-            console.log('show me daataaa ',Booking_History)
       // console.log("checkkkkkkk ",JSON.parse(booking_data)?.Booking_History)
     //   let bookingArray = []
     //   bookingArray = JSON.parse(booking_data)?.Booking_History

@@ -28,6 +28,12 @@ const change_password = require('./Router/RagistrationProcess/UpdatePassword')
 const AllProperty = require('./Router/OtherApi/AllProperty')
 const get_propertys = require('./Router/OtherApi/GetProperty')
 const Most_dest_Propety = require('./Router/OtherApi/Most_dest_Propety')
+const BookingHistory = require('./Router/BookingModules/BookingHistry')
+const BookingCancel = require('./Router/BookingModules/BookingCancel')
+const Active_booking = require('./Router/BookingModules/ActiveBooking')
+const cancel_booking_list = require('./Router/BookingModules/CanelBookingList')
+const upgrade_booking = require('./Router/BookingModules/UpgradeBooking')
+const GetBookingdata_byId = require('./Router/BookingModules/GetDatabyId')
 
 
 
@@ -48,6 +54,12 @@ app.use(AllProperty)
 app.use(get_propertys)
 app.use(Most_dest_Propety)
 app.use(CheckOut)
+app.use(BookingHistory)
+app.use(BookingCancel)
+app.use(Active_booking)
+app.use(cancel_booking_list)
+app.use(upgrade_booking)
+app.use(GetBookingdata_byId)
 app.use(express.static('public'))   //for the image uploade
 
 
